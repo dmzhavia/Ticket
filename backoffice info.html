@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Information</title>
+</head>
+<body>
+
+    <textarea id="gameInfo" rows="5" cols="50" placeholder="Enter game information..."></textarea>
+    <button onclick="submitForm()">Submit</button>
+
+    <script>
+        function submitForm() {
+            var gameInfoText = document.getElementById("gameInfo").value;
+
+            // Extracting information from the text
+            var infoArray = gameInfoText.split('\t');
+            var gameType = infoArray[0];
+            var tableNumber = infoArray[1].match(/\d+/)[0];
+            var date = infoArray[4].split(' ')[0].replace(/\//g, '-');
+            var dealerName = infoArray[3];
+            var gameTime = infoArray[6].substring(1);
+            var gameID = infoArray.find(word => word.startsWith('G') && word.length === 32);
+            var gameStatus = infoArray[infoArray.length - 1];
+
+            // Logging variables and their values to the console
+            console.log("gameType - " + gameType);
+            console.log("tableNumber - " + tableNumber);
+            console.log("date - " + date);
+            console.log("dealerName - " + dealerName);
+            console.log("gameTime - " + gameTime);
+            console.log("gameID - " + gameID);
+            console.log("gameStatus - " + gameStatus);
+        }
+
+        
+        var dealerID = "";
+        var dealerFullName = "";
+
+        // Function to read and process the data.txt file
+        function readDataFile() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "data.txt", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    processData(xhr.responseText);
+                }
+            };
+            xhr.send();
+        }
+
+        // Function to process the contents of data.txt
+        function processData(data) {
+            var lines = data.split('\n');
+            for (var i = 0; i < lines.length; i++) {
+                var columns = lines[i].split('\t');
+                if (columns.length >= 4 && columns[2] === dealerName) {
+                    // Extract information from the line
+                    dealerID = columns[1].substring(2); // Extracting the 9-digit code after "WD"
+                    dealerFullName = columns[3] + ' ' + columns[4]; // Combine the two words between dealerID and dealerName
+
+                    // Output the results (you can modify this part based on your needs)
+                    console.log("Dealer ID: " + dealerID);
+                    console.log("Dealer Full Name: " + dealerFullName);
+
+                    // You can use the dealerID and dealerFullName variables as needed in your code
+                    // For example, update the UI with this information or perform further operations.
+                }
+            }
+        }
+
+        // Call the function to read and process the data.txt file
+        readDataFile();
+
+
+
+
+    </script>
+
+</body>
+</html>
